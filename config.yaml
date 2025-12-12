@@ -1,0 +1,124 @@
+# Visa LLM Project Configuration
+# Edit this file to change settings without modifying code
+
+# ===== DATA COLLECTION =====
+scraping:
+  max_pages: 50  # How many pages to scrape (increase for more data)
+  delay_seconds: 1  # Delay between requests (be respectful!)
+  output_dir: "data/raw"
+  
+data_processing:
+  chunk_size: 800  # Characters per chunk
+  chunk_overlap: 100  # Overlap between chunks
+  min_chunk_size: 100  # Minimum viable chunk size
+  output_dir: "data/processed"
+
+# ===== RAG SYSTEM =====
+rag:
+  embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+  top_k: 3  # Number of chunks to retrieve
+  similarity_threshold: 0.3  # Minimum similarity score (0-1)
+  index_dir: "rag"
+
+# ===== LANGUAGE MODEL =====
+model:
+  # Options: "tinyllama", "phi3", "openai", "context-only"
+  type: "tinyllama"  # Start with fastest
+  
+  # TinyLlama settings (fast, local)
+  tinyllama:
+    model_name: "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+    max_tokens: 300
+    temperature: 0.7
+  
+  # Phi-3 settings (better quality, local)
+  phi3:
+    model_name: "microsoft/Phi-3-mini-4k-instruct"
+    max_tokens: 400
+    temperature: 0.7
+  
+  # OpenAI settings (best quality, requires API key)
+  openai:
+    model_name: "gpt-3.5-turbo"
+    max_tokens: 500
+    temperature: 0.7
+    api_key: ""  # Add your key here or set OPENAI_API_KEY env var
+  
+  # Context-only (no LLM, fastest, safest)
+  context_only:
+    enabled: true  # Always available as fallback
+
+# ===== RESPONSE FORMATTING =====
+responses:
+  include_quick_answer: true
+  include_details: true
+  include_caveats: true
+  include_sources: true
+  include_related_questions: true
+  max_response_length: 2000  # Characters
+
+# ===== UI SETTINGS =====
+ui:
+  title: "🌍 Visa LLM Assistant"
+  subtitle: "Your guide to US immigration powered by official USCIS sources"
+  theme: "soft"  # soft, default, or custom
+  primary_color: "blue"
+  show_examples: true
+  enable_persona_selector: true
+
+# ===== VISA FOCUS AREAS =====
+visa_types:
+  enabled:
+    - "F-1"  # Student visa
+    - "H-1B"  # Work visa
+    - "Green Card"  # Permanent residence
+    - "H-4"  # H-1B dependent
+    - "L-1"  # Intracompany transfer
+    - "O-1"  # Extraordinary ability
+    - "TN"  # NAFTA professional
+  
+  personas:
+    student:
+      visa_types: ["F-1", "OPT", "CPT", "STEM"]
+      example_questions:
+        - "What is F-1 OPT?"
+        - "How long can I work on OPT?"
+        - "What is STEM extension?"
+    
+    worker:
+      visa_types: ["H-1B", "L-1", "O-1", "TN"]
+      example_questions:
+        - "How does H-1B lottery work?"
+        - "Can I change H-1B employers?"
+        - "What is cap-gap?"
+    
+    green_card:
+      visa_types: ["EB-1", "EB-2", "EB-3", "I-485"]
+      example_questions:
+        - "How do I apply for Green Card?"
+        - "What are EB categories?"
+        - "How long does it take?"
+
+# ===== CONVERSATION =====
+conversation:
+  enable_memory: true
+  max_history: 10  # Number of past messages to remember
+  context_window: 5  # How many past Q&As to include in prompt
+
+# ===== LOGGING =====
+logging:
+  enabled: true
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  file: "logs/visa_bot.log"
+
+# ===== DISCLAIMERS =====
+disclaimers:
+  show_on_startup: true
+  text: |
+    ⚠️ **Important Disclaimer:**
+    This tool provides general information from official sources only.
+    It is NOT legal advice. Immigration laws are complex and frequently change.
+    Always:
+    - Verify information with official USCIS sources
+    - Consult with a licensed immigration attorney
+    - Check processing times and requirements regularly
